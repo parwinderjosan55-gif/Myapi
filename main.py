@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import select
 
@@ -14,6 +14,23 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    await websocket.send_json({"type": "connected", "message": "WebSocket connection established"})
+
+    try:
+        while True:
+            message = await websocket.receive()
+
+            if message.get("text") is not None:
+                await websocket.send_json({"type": "message", "data": message["text"]})
+            elif message.get("bytes") is not None:
+                await websocket.send_bytes(message["bytes"])
+    except WebSocketDisconnect:
+        pass
 
 
 @app.on_event("startup")

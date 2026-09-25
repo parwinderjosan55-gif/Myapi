@@ -30,5 +30,21 @@ API Endpoints
 - `GET /students/{id}` : get student
 - `PUT /students/{id}` : update student
 - `DELETE /students/{id}` : delete student
+- `WS /ws` : open a WebSocket connection for real-time messages
+
+WebSocket usage
+
+Connect to `ws://127.0.0.1:8000/ws`. The server sends a connection message when
+the socket opens. Text messages are returned as JSON in this format:
+
+```json
+{
+	"type": "message",
+	"data": "hello"
+}
+```
+
+Binary messages are returned unchanged. The endpoint closes cleanly when the
+client disconnects.
 
 Open interactive docs at `http://127.0.0.1:8000/docs` after starting the server.
